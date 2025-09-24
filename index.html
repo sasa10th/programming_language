@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 프로그래밍 언어라면?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 750px;
+            min-height: 450px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            color: #6a1b9a;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 15px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #42a5f5, #ab47bc);
+            transition: width 0.3s ease;
+        }
+
+        .question {
+            font-weight: bold;
+            margin: 20px 0;
+            font-size: 1.2em;
+            text-align: center;
+            color: #424242;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .options button,
+        .nav-btn,
+        .home-btn {
+            flex: 1 1 calc(100% - 10px);
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7e57c2, #42a5f5);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .options button:hover,
+        .nav-btn:hover,
+        .home-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .result {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 15px;
+            background: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .result h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            background: linear-gradient(to right top, #861657, #ffa69e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result p {
+            font-size: 1.2em;
+            color: gray;
+        }
+
+        .home-btn {
+            margin-bottom: 10px;
+            width: 200px;
+        }
+
+        footer p {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.2em;
+            background: linear-gradient(to right, #861657, #ffa69e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-top: 30px;
+            margin: 0 auto;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            backface-visibility: hidden;
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .card-front {
+            background: #fff;
+            padding: 0px;
+        }
+
+        .card-back {
+            background: #F3F3F3;
+            transform: rotateY(180deg);
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>내가 프로그래밍 언어라면?</h1>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        <div id="quiz"></div>
+        <div id="result" class="result" style="display:none;"></div>
+    </div>
+    <footer>
+        <p>🌸 2025 정보과학의 날. CODE the Day!</p>
+    </footer>
+    <script>
+        const questions = [
+            { q: "정보 동아리에 처음 간 나는…?", options: [{ text: "새로운 친구들에게 적극적으로 다가가는 편이다", value: "E" }, { text: "아는 친구가 들어올 때까지 조용히 있는 편이다", value: "I" }] },
+            { q: "내가 만든 코드에 오류가 생겼다", options: [{ text: "이럴 수가… 내가 열심히 짠 코드가 틀렸다니 너무 우울하다", value: "F" }, { text: "슬퍼할 시간이 없다! 바로 원인은 무엇일지 생각해본다", value: "T" }] },
+            { q: "오늘 안에 프로젝트를 끝내지 못했다", options: [{ text: "그럴 수도 있지 하며 넘긴다", value: "P" }, { text: "내가 왜 그랬지 하며 스트레스 받는다", value: "J" }] },
+            { q: "만들고 싶은 어플을 구상한다", options: [{ text: "어차피 구상인데 뭐 어때? 비현실적이더라도 세계를 구할 혁신적인 어플을 짜보자!", value: "N" }, { text: "기왕이면 구현 가능한 간단한 어플을 생각해본다", value: "S" }] },
+            { q: "정보 대회에서 수상한 나는", options: [{ text: "‘너 이번에 진짜 노력 많이 했잖아! 멋지다’라는 말이 좋다.", value: "F" }, { text: "평소가 문제 푸는 거 별로 본 적 없는 것 같은데 너 진짜 천재인 듯! 이라는 말이 좋다.", value: "T" }] },
+            { q: "학교에서 게임을 만드는 수행평가", options: [{ text: "조별 과제면 너무 재미있겠다…!", value: "E" }, { text: "조별 과제는 절대 안 돼…! 자퇴할 거야!!", value: "I" }] },
+            { q: "카페에서 키오스크로 주문한다", options: [{ text: "항상 먹던 메뉴로 시킨다", value: "J" }, { text: "매번 먹는 메뉴를 먹는 것은 재미없으니 새로운 메뉴를 시도한다", value: "P" }] },
+            { q: "내일이 정보 시험이라고?!", options: [{ text: "시험을 망치면 어쩌지 걱정이 많고 온갖 상상을 하게 된다", value: "S" }, { text: "현재에 집중해서 지금 할 수 있는 공부에 최선을 다한다", value: "N" }] },
+            { q: "나와 함께 SASA에 방문한 친구의 기분이 안 좋아 보인다", options: [{ text: "나는 친구의 기분과 감정에 쉽게 동화되는 편이다", value: "F" }, { text: "나는 친구의 감정에 공감을 하기 어려울 때가 많다", value: "T" }] },
+            { q: "친구가 갑자기 이런 질문을 해왔다. “내일 당장 지구가 인공지능에게 지배당한다면 넌 어떻게 할 거야?” 당신의 대답은?", options: [{ text: "그럴 리가 없다", value: "S" }, { text: "인공지능이 지배하는 세상이 오면 어떻게 할지 상상하기 시작한다", value: "N" }] },
+            { q: "학교 행사를 준비하던 중, 안 친한 친구와 연락할 일이 생겼다", options: [{ text: "통화로 확실히 얘기하는 게 편하다!", value: "E" }, { text: "통화는 너무 부담스럽다… 문자가 좋다!", value: "I" }] },
+            { q: "숙제가 너무 많이 쌓여 있다…", options: [{ text: "일단 유튜브 10분만 보고 생각하자", value: "P" }, { text: "숙제가 쌓여 있는 걸 쳐다보기도 싫다. 빨리 해치우자!", value: "J" }] }
+        ];
+
+        let current = 0;
+        let answers = { E: 0, I: 0, N: 0, S: 0, T: 0, F: 0, J: 0, P: 0 };
+        let history = [];
+
+        const quizDiv = document.getElementById("quiz");
+        const resultDiv = document.getElementById("result");
+        const progress = document.getElementById("progress");
+
+        function updateProgress() {
+            const percent = (current / questions.length) * 100;
+            progress.style.width = percent + "%";
+        }
+
+        function showQuestion() {
+            if (current < questions.length) {
+                let q = questions[current];
+                quizDiv.innerHTML = `<div class='question'>${q.q}</div>`;
+
+                let opts = "<div class='options'>";
+                q.options.forEach(opt => {
+                    opts += `<button onclick=selectAnswer('${opt.value}')>${opt.text}</button>`;
+                });
+                opts += "</div>";
+                quizDiv.innerHTML += opts;
+
+                let nav = `<div class="nav">`;
+                if (current > 0) {
+                    nav += `<button class="nav-btn" onclick="goBack()">⬅ 뒤로</button>`;
+                }
+                if (current < questions.length - 1) {
+                    let disabled = history[current] === undefined ? "disabled style='opacity:0.5; cursor:not-allowed;'" : "";
+                    nav += `<button class="nav-btn" onclick="goNext()" ${disabled}>앞으로 ➡</button>`;
+                }
+                nav += `</div>`;
+                quizDiv.innerHTML += nav;
+
+                updateProgress();
+            } else {
+                showResult();
+            }
+        }
+
+        function selectAnswer(val) {
+            if (history[current] !== undefined) {
+                answers[history[current]]--;
+            }
+            history[current] = val;
+            answers[val]++;
+            current++;
+            showQuestion();
+        }
+
+        function goNext() {
+            if (current < questions.length - 1) {
+                current++;
+                showQuestion();
+            }
+        }
+
+        function goBack() {
+            if (current > 0) {
+                current--;
+                showQuestion();
+            }
+        }
+
+        function showResult() {
+            quizDiv.style.display = "none";
+            progress.style.width = "100%";
+
+            let counts = { E: 0, I: 0, N: 0, S: 0, T: 0, F: 0, J: 0, P: 0 };
+            history.forEach(val => {
+                if (val) counts[val]++;
+            });
+
+            let mbti =
+                (counts["E"] >= counts["I"] ? "E" : "I") +
+                (counts["N"] >= counts["S"] ? "N" : "S") +
+                (counts["T"] >= counts["F"] ? "T" : "F") +
+                (counts["J"] >= counts["P"] ? "J" : "P");
+
+            let language = "";
+            let imgSrc = "";
+            if (["INFP", "ISFP", "ESTP"].includes(mbti)) {
+                language = "Python│ 직관적이고 창의적인 당신";
+                imgSrc = "./images/python.png";
+            } else if (["ISTJ", "INTJ"].includes(mbti)) {
+                language = "C/C++│ 원칙과 체계의 언어";
+                imgSrc = "./images/cpp.png";
+            } else if (["ESTJ", "ENTJ"].includes(mbti)) {
+                language = "Java│ 안정성과 신뢰의 상징";
+                imgSrc = "./images/java.png";
+            } else if (["ENFP", "ESFP", "ENTP"].includes(mbti)) {
+                language = "HTML/CSS│ 창의적이고 실험적인 웹 언어";
+                imgSrc = "./images/htmlcss.png";
+            } else if (["ISTP", "INTP"].includes(mbti)) {
+                language = "SQL│ 데이터 중심의 탐구자";
+                imgSrc = "./images/sql.png";
+            } else if (["ESFJ", "INFJ"].includes(mbti)) {
+                language = "Rust│ 안전성과 성능을 중시하는 전략가";
+                imgSrc = "./images/rust.png";
+            } else {
+                language = "R│ 깊이 있는 분석가";
+                imgSrc = "./images/r.png";
+            }
+
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = `
+            <div class="card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <p>당신은</p>
+                        <h2>${language}</h2>
+                        <p>${mbti}</p>
+                        <button class="home-btn" onclick="goHome(); event.stopPropagation();">🏠 처음으로</button>
+                    </div>
+                    <div class="card-back">
+                        <img src="${imgSrc}" alt="${language}">
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function goHome() {
+            current = 0;
+            answers = { E: 0, I: 0, N: 0, S: 0, T: 0, F: 0, J: 0, P: 0 };
+            history = [];
+            quizDiv.style.display = "block";
+            resultDiv.style.display = "none";
+            showQuestion();
+        }
+
+        showQuestion();
+    </script>
+</body>
+
+</html>
